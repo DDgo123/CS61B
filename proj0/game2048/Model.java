@@ -135,9 +135,20 @@ public class Model extends Observable {
 
     /** Returns true if at least one space on the Board is empty.
      *  Empty spaces are stored as null.
+     *  遍历Board，如果有空返回True，否则False
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        // Done.
+        int size = b.size();
+        for (int col = 0; col < size;col += 1){
+            for (int row = 0; row < size; row += 1){
+                if (b.tile(col,row) == null){
+                    return true;
+                }
+            }
+
+        }
+
         return false;
     }
 
@@ -148,6 +159,18 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        int size = b.size();
+        for (int col = 0; col < size;col += 1){
+            for (int row = 0; row < size; row += 1){
+                if (b.tile(col,row) == null){
+                    continue;
+                }
+                if (b.tile(col,row).value() == MAX_PIECE){
+                    return true;
+                }
+            }
+
+        }
         return false;
     }
 
@@ -159,6 +182,34 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if (emptySpaceExists(b) || AdjacentSameValue(b) ){
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean AdjacentSameValue(Board b) {
+        int size = b.size();
+        for (int col = 0; col < size;col += 1){
+            for (int row = 0; row < size; row += 1){
+                Tile t = b.tile(col,row);
+                if (t.value() == 0) {
+                    continue;
+                }
+                if (row > 0 && b.tile(row - 1, col).value() == t.value()) {
+                    return true;
+                }
+                if (row < size - 1 && b.tile(row + 1, col).value() == t.value()) {
+                    return true;
+                }
+                if (col > 0 && b.tile(row, col - 1).value() == t.value()) {
+                    return true;
+                }
+                if (col < size - 1 && b.tile(row, col + 1).value() == t.value()) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
