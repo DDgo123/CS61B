@@ -1,5 +1,7 @@
 package game2048;
 
+import com.sun.source.doctree.SystemPropertyTree;
+
 import java.util.Formatter;
 import java.util.Observable;
 
@@ -109,17 +111,49 @@ public class Model extends Observable {
     public boolean tilt(Side side) {
         boolean changed;
         changed = false;
+        board.setViewingPerspective(side);
 
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        for (int c = 0; c < board.size(); c += 1){
+            for (int r = board.size() - 1 ; r >= 0; r -= 1){
+                Tile tile = board.tile(c,r);
+                int nextrow = NextTileRow(c,r);
+                if (nextrow == -1){
+                    break;
+                }
+                Tile nexttile = board.tile(c,nextrow);
+                if (tile == null || tile.value() == nexttile.value()) {
+                    changed = true;
+                    if (board.move(c, r, nexttile)) {
+                        score += 2 * nexttile.value();
+                    } else {
+                        r++;
+                    }
+                }
+            }
+        }
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
     }
+    /*返回棋子向上方向要移动到的格子 */
+    public int NextTileRow(int col,int row){
+
+        for (int r = row - 1 ; r >= 0; r--) {
+            if (board.tile(col,r) != null){
+                return  r;
+            }
+        }
+        return -1;
+    }
+
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
