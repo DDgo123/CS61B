@@ -6,6 +6,10 @@ package DebugExercise;
  */
 public class DebugExercise1 {
     public static int divideThenRound(int top, int bottom) {
+        if (bottom == 0) {
+            // 处理除数为0的情况，这里选择返回0作为结果
+            return 0;
+        }
         int quotient = top / bottom;
         int result = Math.round(quotient);
         return result;
@@ -26,5 +30,5 @@ public class DebugExercise1 {
         int b3 = 4;
         int result3 = divideThenRound(t3, b3);
         System.out.println("round(" + t3 + "/" + b3 + ")=" + result3);
-    }
+     }
 }
