@@ -96,7 +96,7 @@ public class ArrayDeque<Item>  {
     }
 
 
-    
+
     public Item get(int i) {
         if (i <= size && i >= 0){
             int position = (nextFirst + i + 1) % Array.length;
