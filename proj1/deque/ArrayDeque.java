@@ -17,7 +17,7 @@ import randomizedtest.LinkedListDeque;
  size: The number of items in the list should be size.
 */
 
-public class ArrayDeque<Item> implements Deque<Item> {
+public class ArrayDeque<Item>  {
     private Item[] Array;
 
     private int size;
@@ -48,7 +48,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
         nextFirst = a.length - 1;
         nextLast = size;
     }
-    @Override
+
     public void addFirst(Item x) {
         if (size == Array.length) {
             resize(size * 2);
@@ -60,7 +60,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
 
     }
 
-    @Override
+
     public void addLast(Item x) {
         if (size == Array.length) {
             resize(size * 2);
@@ -71,7 +71,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
         size = size + 1;
 
     }
-    @Override
+
     public Item removeLast() {
         int last = (nextLast - 1 + Array.length) % Array.length;
         Item x = Array[last];
@@ -83,7 +83,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
 
         return x;
     }
-    @Override
+
     public Item removeFirst() {
         int first = (nextFirst + 1) % Array.length;
         Item x = Array[first];
@@ -96,7 +96,7 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
 
-    @Override
+    
     public Item get(int i) {
         if (i <= size && i >= 0){
             int position = (nextFirst + i + 1) % Array.length;
@@ -107,18 +107,18 @@ public class ArrayDeque<Item> implements Deque<Item> {
     }
 
 
-    @Override
+
     public int size() {
         return size;
     }
-    @Override
+
     public boolean isEmpty() {
         if (size == 0) {
             return true;
         }
         return false;
     }
-    @Override
+
     public void printDeque() {
         int current = (nextFirst + 1 + Array.length) % Array.length;
         for (int i = 0; i < size; i++) {
@@ -136,11 +136,11 @@ public class ArrayDeque<Item> implements Deque<Item> {
             return true;
         }
 
-        if (!(o instanceof Deque)) {
+        if (!(o instanceof LinkedListDeque)) {
             return false;
         }
 
-        Deque<?> other = (Deque<?>) o;
+        LinkedListDeque<?> other = (LinkedListDeque<?>) o;
 
         if (this.size() != other.size()) {
             return false;

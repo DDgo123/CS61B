@@ -9,7 +9,7 @@ import net.sf.saxon.functions.ConstantFunction;
  * sentinel.next指向第一个项目；
  * sentinel.prev指向结尾；
  * size永远是项目的大小*/
-public class LinkedListDeque<Item> implements Deque<Item> {
+public class LinkedListDeque<Item>  {
     private class LinkList {
         public LinkList prev;
         public Item item;
@@ -41,13 +41,13 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         size = 1;
     }
 
-    @Override
+
     public void addFirst(Item x) {
         size = size + 1;
         sentinel.next = new LinkList(sentinel,x, sentinel.next);
 
     }
-    @Override
+
     public void addLast(Item x) {
         size = size + 1;
 
@@ -55,7 +55,7 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         prevLast.next = new LinkList(prevLast,x, sentinel);
         sentinel.prev = prevLast.next;
     }
-    @Override
+
     public Item removeFirst(){
         if (sentinel.next == sentinel){
             return  null;
@@ -67,7 +67,7 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         return First.item;
 
     }
-    @Override
+
     public Item removeLast(){
         if (sentinel.prev == sentinel){
             return  null;
@@ -80,7 +80,7 @@ public class LinkedListDeque<Item> implements Deque<Item> {
 
     }
     /** Returns the first item in the list. */
-    @Override
+
     public void printDeque(){
         int s = size;
         LinkList current = sentinel.next;
@@ -91,7 +91,7 @@ public class LinkedListDeque<Item> implements Deque<Item> {
         }
         System.out.println();
     }
-    @Override
+
     public boolean isEmpty(){
         if (size == 0){
             return true;
@@ -103,7 +103,7 @@ public class LinkedListDeque<Item> implements Deque<Item> {
 
 
     /** returns last item in the list */
-    @Override
+
     public Item get(int i) {
         if (i <= size){
             LinkList current = sentinel.next;
@@ -133,7 +133,7 @@ public class LinkedListDeque<Item> implements Deque<Item> {
 
 
     /** Returns the size of the list. */
-    @Override
+
     public int size() {
         return size;
     }
@@ -146,11 +146,11 @@ public class LinkedListDeque<Item> implements Deque<Item> {
             return true;
         }
 
-        if (!(o instanceof Deque)) {
+        if (!(o instanceof ArrayDeque)) {
             return false;
         }
 
-        Deque<?> other = (Deque<?>) o;
+        ArrayDeque<?> other = (ArrayDeque<?>) o;
 
         if (this.size() != other.size()) {
             return false;
