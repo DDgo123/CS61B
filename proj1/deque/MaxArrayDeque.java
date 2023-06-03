@@ -1,8 +1,6 @@
 package deque;
 
 
-import randomizedtest.LinkedListDeque;
-
 /** Array based list.
  *  @author Josh Hug
  */
