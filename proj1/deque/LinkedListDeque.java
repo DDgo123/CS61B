@@ -1,8 +1,6 @@
 package deque;
 
 
-import net.sf.saxon.functions.ConstantFunction;
-
 /** An SLList is a list of integers, which hides the terrible truth
  * of the nakedness within.
  * 不变量：
@@ -146,11 +144,11 @@ public class LinkedListDeque<Item>  {
             return true;
         }
 
-        if (!(o instanceof ArrayDeque)) {
+        if (!(o instanceof MaxArrayDeque)) {
             return false;
         }
 
-        ArrayDeque<?> other = (ArrayDeque<?>) o;
+        MaxArrayDeque<?> other = (MaxArrayDeque<?>) o;
 
         if (this.size() != other.size()) {
             return false;

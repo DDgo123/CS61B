@@ -7,7 +7,7 @@ public class ArrayDequeTest {
     public void addIsEmptySizeTest() {
 
 
-        ArrayDeque<String> lld1 = new ArrayDeque<>();
+        MaxArrayDeque<String> lld1 = new MaxArrayDeque<>();
 
         assertTrue("A newly initialized LLDeque should be empty", lld1.isEmpty());
         lld1.addFirst("front");
@@ -32,7 +32,7 @@ public class ArrayDequeTest {
     public void addRemoveTest() {
 
 
-        ArrayDeque<Integer> lld1 = new ArrayDeque<>();
+        MaxArrayDeque<Integer> lld1 = new MaxArrayDeque<>();
         // should be empty
         assertTrue("lld1 should be empty upon initialization", lld1.isEmpty());
 
@@ -50,7 +50,7 @@ public class ArrayDequeTest {
     public void removeEmptyTest() {
 
 
-        ArrayDeque<Integer> lld1 = new ArrayDeque<>();
+        MaxArrayDeque<Integer> lld1 = new MaxArrayDeque<>();
         lld1.addFirst(3);
 
         lld1.removeLast();
@@ -71,9 +71,9 @@ public class ArrayDequeTest {
     public void multipleParamTest() {
 
 
-        ArrayDeque<String>  lld1 = new ArrayDeque<String>();
-        ArrayDeque<Double>  lld2 = new ArrayDeque<Double>();
-        ArrayDeque<Boolean> lld3 = new ArrayDeque<Boolean>();
+        MaxArrayDeque<String> lld1 = new MaxArrayDeque<String>();
+        MaxArrayDeque<Double> lld2 = new MaxArrayDeque<Double>();
+        MaxArrayDeque<Boolean> lld3 = new MaxArrayDeque<Boolean>();
 
         lld1.addFirst("string");
         lld2.addFirst(3.14159);
@@ -92,7 +92,7 @@ public class ArrayDequeTest {
 
         System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
 
-        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
+        MaxArrayDeque<Integer> lld1 = new MaxArrayDeque<Integer>();
 
         boolean passed1 = false;
         boolean passed2 = false;
@@ -108,7 +108,7 @@ public class ArrayDequeTest {
 
         System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
 
-        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
+        MaxArrayDeque<Integer> lld1 = new MaxArrayDeque<Integer>();
         for (int i = 0; i < 1000000; i++) {
             lld1.addLast(i);
         }
@@ -128,7 +128,7 @@ public class ArrayDequeTest {
 
         System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
 
-        ArrayDeque<Integer> lld1 = new ArrayDeque<>();
+        MaxArrayDeque<Integer> lld1 = new MaxArrayDeque<>();
         for (int i = 0; i < 1000000; i++) {
             lld1.addLast(i);
         }
@@ -143,7 +143,7 @@ public class ArrayDequeTest {
     @Test
     public void EqualMethodTest() {
 
-        ArrayDeque<String> lld1 = new ArrayDeque<>();
+        MaxArrayDeque<String> lld1 = new MaxArrayDeque<>();
         lld1.addFirst("back");
         lld1.addFirst("middle");
         lld1.addFirst("front");
@@ -152,7 +152,7 @@ public class ArrayDequeTest {
         System.out.println("Printing out deque: ");
         lld1.printDeque();
 
-        ArrayDeque<String> lld2 = new ArrayDeque<>();
+        MaxArrayDeque<String> lld2 = new MaxArrayDeque<>();
         lld2.addLast("front");
         lld2.addLast("middle");
         lld2.addLast("back");
