@@ -7,7 +7,7 @@ package deque;
  * sentinel.next指向第一个项目；
  * sentinel.prev指向结尾；
  * size永远是项目的大小*/
-public class LinkedListDeque<Item>  {
+public class LinkedListDeque<Item> implements Deque<Item>  {
     private class LinkList {
         public LinkList prev;
         public Item item;
@@ -144,11 +144,11 @@ public class LinkedListDeque<Item>  {
             return true;
         }
 
-        if (!(o instanceof MaxArrayDeque)) {
+        if (!(o instanceof Deque)) {
             return false;
         }
 
-        MaxArrayDeque<?> other = (MaxArrayDeque<?>) o;
+        Deque<?> other = (Deque<?>) o;
 
         if (this.size() != other.size()) {
             return false;

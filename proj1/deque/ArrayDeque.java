@@ -17,7 +17,7 @@ package deque;
  size: The number of items in the list should be size.
 */
 
-public class ArrayDeque<Item>  {
+public class ArrayDeque<Item>  implements Deque<Item>{
     private Item[] Array;
 
     private int size;
@@ -136,11 +136,11 @@ public class ArrayDeque<Item>  {
             return true;
         }
 
-        if (!(o instanceof LinkedListDeque)) {
+        if (!(o instanceof Deque)) {
             return false;
         }
 
-        LinkedListDeque<?> other = (LinkedListDeque<?>) o;
+        Deque<?> other = (Deque<?>) o;
 
         if (this.size() != other.size()) {
             return false;
