@@ -1,19 +1,21 @@
 package deque;
 
 
+import java.util.Iterator;
+
 /** An SLList is a list of integers, which hides the terrible truth
  * of the nakedness within.
  * 不变量：
  * sentinel.next指向第一个项目；
  * sentinel.prev指向结尾；
  * size永远是项目的大小*/
-public class LinkedListDeque<Item> implements Deque<Item>  {
+public class LinkedListDeque<T> implements Deque<T> ,Iterable<T> {
     private class LinkList {
         public LinkList prev;
-        public Item item;
+        public T item;
         public LinkList next;
 
-        public LinkList(LinkList p,Item i, LinkList n) {
+        public LinkList(LinkList p, T i, LinkList n) {
             prev = p;
             item = i;
             next = n;
@@ -32,7 +34,7 @@ public class LinkedListDeque<Item> implements Deque<Item>  {
         size = 0;
     }
 
-    public LinkedListDeque(Item x) {
+    public LinkedListDeque(T x) {
         sentinel = new LinkList(null,null, null);
         sentinel.next = new LinkList(sentinel,x, null);
         sentinel.prev = sentinel.next;
@@ -40,13 +42,13 @@ public class LinkedListDeque<Item> implements Deque<Item>  {
     }
 
 
-    public void addFirst(Item x) {
+    public void addFirst(T x) {
         size = size + 1;
         sentinel.next = new LinkList(sentinel,x, sentinel.next);
 
     }
 
-    public void addLast(Item x) {
+    public void addLast(T x) {
         size = size + 1;
 
         LinkList prevLast = sentinel.prev;
@@ -54,7 +56,7 @@ public class LinkedListDeque<Item> implements Deque<Item>  {
         sentinel.prev = prevLast.next;
     }
 
-    public Item removeFirst(){
+    public T removeFirst(){
         if (sentinel.next == sentinel){
             return  null;
         }
@@ -66,7 +68,7 @@ public class LinkedListDeque<Item> implements Deque<Item>  {
 
     }
 
-    public Item removeLast(){
+    public T removeLast(){
         if (sentinel.prev == sentinel){
             return  null;
         }
@@ -90,19 +92,14 @@ public class LinkedListDeque<Item> implements Deque<Item>  {
         System.out.println();
     }
 
-    public boolean isEmpty(){
-        if (size == 0){
-            return true;
-        }
-        return false;
-    }
+
 
     /** Adds x to the end of the list. */
 
 
     /** returns last item in the list */
 
-    public Item get(int i) {
+    public T get(int i) {
         if (i <= size){
             LinkList current = sentinel.next;
             while (i > 0 ){
@@ -114,11 +111,11 @@ public class LinkedListDeque<Item> implements Deque<Item>  {
         return null;
 
     }
-    public Item getRecursive(int index) {
+    public T getRecursive(int index) {
         return getRecursiveHelper(sentinel.next, index);
     }
 
-    private Item getRecursiveHelper(LinkList node, int index) {
+    private T getRecursiveHelper(LinkList node, int index) {
         if (index < 0 || index >= size) {
             return null;
         }
@@ -167,6 +164,33 @@ public class LinkedListDeque<Item> implements Deque<Item>  {
         LinkedListDeque L = new LinkedListDeque();
         L.addLast(20);
         System.out.println(L.size());
+    }
+    @Override
+    public Iterator<T> iterator()  {
+        return new LinkedListDequeIterator();
+    }
+    private class LinkedListDequeIterator implements Iterator<T>{
+        private LinkList current;
+        public LinkedListDequeIterator(){
+            current = sentinel;
+
+        }
+
+        @Override
+        public boolean hasNext() {
+            if(! (current.next == sentinel) ){
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public T next() {
+            current = current.next;
+            T returnItem = current.item;
+            return returnItem;
+
+        }
     }
 
 }
