@@ -1,21 +1,19 @@
 package deque;
+import java.util.Comparator;
 
 public class test {
     public static void main(String[] args){
-        ArrayDeque<Integer> test1 = new ArrayDeque<>();
+        Comparator<Integer> comparator = (o1, o2) -> 0;
+        MaxArrayDeque<Integer> test1 = new MaxArrayDeque<>(comparator);
         for (int i = 0;i < 10000;i++){
             test1.addLast(i);
         }
-        for (int i = 0;i < 9920;i++){
-            test1.removeLast();
-        }
 
-        for (int i : test1){
-            System.out.println(i);
-        }
+            System.out.println(test1.max());
 
 
-        LinkedListDeque<Integer> test2 = new LinkedListDeque<>(0);
+
+        LinkedListDeque<Integer> test2 = new LinkedListDeque<>();
 
 
 

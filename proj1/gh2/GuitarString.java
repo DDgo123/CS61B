@@ -1,6 +1,6 @@
 package gh2;
 import deque.ArrayDeque;
-
+import deque.Deque;
 
 
 //Note: This file will not compile until you complete the Deque implementations
@@ -13,7 +13,7 @@ public class GuitarString {
 
     /* Buffer for storing sound data. */
 
-    private ArrayDeque<Double> buffer;
+    private Deque<Double> buffer;
 
     /* Create a guitar string of the given frequency.  */
     public GuitarString(double frequency) {
@@ -47,6 +47,6 @@ public class GuitarString {
     /* Return the double at the front of the buffer. */
     public double sample() {
 
-        return buffer.get(buffer.size()-1);
+        return buffer.get(0);
     }
 }
