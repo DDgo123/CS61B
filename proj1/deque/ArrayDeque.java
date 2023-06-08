@@ -11,13 +11,9 @@ import java.util.Iterator;
 // items: [6 9 -1 2 0 0 0 0 ...]
 // size: 5
 
-/* Invariants:
- addLast: The next item we want to add, will go into position size
- getLast: The item we want to return is in position size - 1
- size: The number of items in the list should be size.
-*/
 
-public class ArrayDeque<T>  implements Deque<T> ,Iterable<T>{
+
+public class ArrayDeque<T>  implements Deque<T> , Iterable<T>{
     private T[] Array;
 
     private int size;
@@ -71,14 +67,14 @@ public class ArrayDeque<T>  implements Deque<T> ,Iterable<T>{
         size = size + 1;
 
     }
-    public void SizeCheck(){
+    private void sizeCheck(){
         double used = (double) Array.length/size;
         if (used > 4 && size > 16){
-            resize(size * 3);
+            resize(size * 2);
         }
     }
     public T removeLast() {
-        SizeCheck();
+        sizeCheck();
         int last = (nextLast - 1 + Array.length) % Array.length;
         T x = Array[last];
         if (x != null) {
@@ -91,7 +87,7 @@ public class ArrayDeque<T>  implements Deque<T> ,Iterable<T>{
     }
 
     public T removeFirst() {
-        SizeCheck();
+        sizeCheck();
         int first = (nextFirst + 1) % Array.length;
         T x = Array[first];
         if (x != null) {
@@ -170,10 +166,7 @@ public class ArrayDeque<T>  implements Deque<T> ,Iterable<T>{
 
         @Override
         public boolean hasNext() {
-            if(current < size ){
-                return true;
-            }
-            return false;
+            return current < size;
         }
 
         @Override

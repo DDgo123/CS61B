@@ -11,9 +11,9 @@ import java.util.Iterator;
  * size永远是项目的大小*/
 public class LinkedListDeque<T> implements Deque<T> ,Iterable<T> {
     private class LinkList {
-        public LinkList prev;
-        public T item;
-        public LinkList next;
+        private LinkList prev;
+        private final T item;
+        private LinkList next;
 
         public LinkList(LinkList p, T i, LinkList n) {
             prev = p;
@@ -23,7 +23,7 @@ public class LinkedListDeque<T> implements Deque<T> ,Iterable<T> {
     }
 
     /* The first item (if it exists) is at sentinel.next. */
-    private LinkList sentinel;
+    private final LinkList sentinel;
     private int size;
 
     /** Creates an empty timingtest.SLList. */
@@ -43,8 +43,12 @@ public class LinkedListDeque<T> implements Deque<T> ,Iterable<T> {
 
 
     public void addFirst(T x) {
-        size = size + 1;
+        LinkList oldFirst = sentinel.next;
+
         sentinel.next = new LinkList(sentinel,x, sentinel.next);
+        oldFirst.prev = sentinel.next;
+
+        size = size + 1;
 
     }
 
@@ -94,10 +98,7 @@ public class LinkedListDeque<T> implements Deque<T> ,Iterable<T> {
 
 
 
-    /** Adds x to the end of the list. */
 
-
-    /** returns last item in the list */
 
     public T get(int i) {
         if (i <= size){
@@ -159,12 +160,6 @@ public class LinkedListDeque<T> implements Deque<T> ,Iterable<T> {
         return true;
     }
 
-    public static void main(String[] args) {
-        /* Creates a list of one integer, namely 10 */
-        LinkedListDeque L = new LinkedListDeque();
-        L.addLast(20);
-        System.out.println(L.size());
-    }
     @Override
     public Iterator<T> iterator()  {
         return new LinkedListDequeIterator();
@@ -178,17 +173,13 @@ public class LinkedListDeque<T> implements Deque<T> ,Iterable<T> {
 
         @Override
         public boolean hasNext() {
-            if(! (current.next == sentinel) ){
-                return true;
-            }
-            return false;
+            return !(current.next == sentinel);
         }
 
         @Override
         public T next() {
             current = current.next;
-            T returnItem = current.item;
-            return returnItem;
+            return current.item;
 
         }
     }

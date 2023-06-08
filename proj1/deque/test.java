@@ -13,15 +13,22 @@ public class test {
         for (int i : test1){
             System.out.println(i);
         }
-        /**
+
 
         LinkedListDeque<Integer> test2 = new LinkedListDeque<>();
-        for (int i = 0;i < 10;i++){
-            test2.addLast(i);
-        }
-        for (int i : test2){
-            System.out.println(i);
-        }
-         */
+
+        test2.addFirst(3);
+        test2.addLast(2);
+
+
+
+
+
+        System.out.println(test2.removeLast());
+        test2.addLast(4);
+        test2.addLast(5);
+        System.out.println(test2.removeFirst());
+
+
     }
 }
