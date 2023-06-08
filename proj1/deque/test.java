@@ -15,19 +15,13 @@ public class test {
         }
 
 
-        LinkedListDeque<Integer> test2 = new LinkedListDeque<>();
-
-        test2.addFirst(3);
-        test2.addLast(2);
-
+        LinkedListDeque<Integer> test2 = new LinkedListDeque<>(0);
 
 
 
 
         System.out.println(test2.removeLast());
-        test2.addLast(4);
-        test2.addLast(5);
-        System.out.println(test2.removeFirst());
+
 
 
     }
