@@ -68,8 +68,8 @@ public class ArrayDeque<T>  implements Deque<T> , Iterable<T>{
 
     }
     private void sizeCheck(){
-        double used = (double) Array.length/size;
-        if (used > 4 && size > 16){
+        double used = (double) size / Array.length;
+        if (used <0.25 && Array.length > 16){
             resize(size * 2);
         }
     }

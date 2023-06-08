@@ -1,15 +1,18 @@
 package deque;
-import java.util.Comparator;
+
 
 public class test {
     public static void main(String[] args){
-        Comparator<Integer> comparator = (o1, o2) -> 0;
-        MaxArrayDeque<Integer> test1 = new MaxArrayDeque<>(comparator);
-        for (int i = 0;i < 10000;i++){
+
+        ArrayDeque<Integer> test1 = new ArrayDeque<>();
+        for (int i = 0;i < 64;i++){
             test1.addLast(i);
         }
+        for (int i = 0;i < 63;i++){
+            test1.removeFirst();
+        }
 
-            System.out.println(test1.max());
+            System.out.println(test1.size());
 
 
 
