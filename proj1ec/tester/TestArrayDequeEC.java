@@ -31,14 +31,14 @@ public class TestArrayDequeEC {
         for (int i = 0; i < 10; i++) {
             double randomValue = StdRandom.uniform();
             if (randomValue < 0.5) {
-                Integer a =ADS.removeLast();
-                Integer b =SAD.removeLast();
+                Integer a = ADS.removeLast();
+                Integer b = SAD.removeLast();
                 errString += "removeLast()\n";
                 assertEquals(errString, a, b);
 
             } else {
-                Integer a =ADS.removeFirst();
-                Integer b =SAD.removeFirst();
+                Integer a = ADS.removeFirst();
+                Integer b = SAD.removeFirst();
                 errString += "removeFirst()\n";
                 assertEquals(errString, a, b);
             }
