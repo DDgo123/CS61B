@@ -60,8 +60,8 @@ public class Commit implements Serializable {
     }
 
     public String getParentsId() {
-        if (parentsId.isEmpty()){
-            return  null;
+        if (parentsId.isEmpty()) {
+            return null;
         }
 
         return parentsId.get(0);
