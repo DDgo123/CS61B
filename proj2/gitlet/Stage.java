@@ -91,5 +91,10 @@ public class Stage implements Serializable {
     public boolean containsBranch(String branchName) {
         return branchMap.containsKey(branchName);
     }
+
+    public void rmBranch(String branchName) {
+        branchMap.remove(branchName);
+
+    }
 }
 

@@ -37,7 +37,6 @@ public class Repository {
     public static final File HEAD_DIR = join(GITLET_DIR, "head");
     public static final File BRANCH_DIR = join(GITLET_DIR, "branch");
     public static final File MASTER_DIR = join(BRANCH_DIR, "master");
-    public static final File STAGE = join(STAGE_DIR, "stage");
     private static Stage stage;
 
     public static void init() {
@@ -100,7 +99,6 @@ public class Repository {
 
     public static void commit(String message) {
         stage = loadStage();
-
         if (message.isEmpty()) {
             exitWithMessage("No changes added to the commit.");
         }
@@ -181,7 +179,6 @@ public class Repository {
         stage.printStatus();
     }
 
-
     public static void checkout(String[] args) {
         stage = loadStage();
         if (args.length == 3) {
@@ -191,32 +188,72 @@ public class Repository {
             checkoutFile(args[1], args[3]);
         }
         if (args.length == 2) {
+            if (stage.getCurBranch().equals(args[1])) {
+                exitWithMessage("No need to checkout the current branch.");
+            }
+            checkoutCommitDelete(stage.getBranchHead(args[1]));
             checkoutBranch(args[1]);
-
         }
 
     }
 
+    public static void branch(String branchName) {
+        stage = loadStage();
+        if (stage.containsBranch(branchName)) {
+            exitWithMessage("A branch with that name already exists.");
+        }
+        stage.setHead(branchName, stage.getCurCommitId());
+        stage.save();
+    }
+
+    public static void rmBranch(String branchName) {
+        stage = loadStage();
+        if (!stage.containsBranch(branchName)) {
+            exitWithMessage("A branch with that name does not exist.");
+        }
+        if (stage.getCurBranch().equals(branchName)) {
+            exitWithMessage("Cannot remove the current branch.");
+        }
+        stage.rmBranch(branchName);
+        stage.save();
+    }
+
+    public static void reset(String commitId) {
+        if (!join(COMMIT_DIR, commitId).exists()) {
+            exitWithMessage("No commit with that id exists.");
+        }
+        stage = loadStage();
+        String curBranch = stage.getCurBranch();
+        checkoutCommitDelete(commitId);
+        stage.setHead(curBranch, commitId);
+        stage.save();
+        checkoutBranch(curBranch);
+
+    }
+
+    public static void merge(String arg) {
+
+    }
+
+
     private static void checkoutBranch(String branchName) {
         stage = loadStage();
-        String commitId = stage.getBranchHead(branchName);
+        String targetCommitId = stage.getBranchHead(branchName);
         if (!stage.containsBranch(branchName)) {
             exitWithMessage("No such branch exists.");
         }
-        if (stage.getCurBranch().equals(branchName)) {
-            exitWithMessage("No need to checkout the current branch.");
-        }
 
-        Commit curCommit = Commit.read(commitId);
+        Commit targetCommit = Commit.read(targetCommitId);
         List<String> untrackFileList = getUntrackFileList();
-        for (String fileName : curCommit.getFileMap().keySet()) {
-            if (untrackFileList.contains(fileName)){
+        for (String fileName : targetCommit.getFileMap().keySet()) {
+            if (untrackFileList.contains(fileName)) {
                 exitWithMessage("There is an untracked file in the way; delete it, or add and commit it first.");
             }
-            checkoutFile(commitId, fileName);
+            checkoutFile(targetCommitId, fileName);
         }
         stage.clearAll();
         stage.setCurBranch(branchName);
+        stage.save();
     }
 
     private static List<String> getUntrackFileList() {
@@ -224,19 +261,30 @@ public class Repository {
         Commit curCommit = Commit.read(stage.getCurCommitId());
         List<String> result = new ArrayList<>();
         List<String> cwdList = plainFilenamesIn(CWD);
-        for(String fileName : cwdList){
+        for (String fileName : cwdList) {
             boolean staged = stage.getAddStage().containsKey(fileName);
             boolean tracked = curCommit.getFileMap().containsKey(fileName);
-            if((!staged && !tracked)){
+            if ((!staged && !tracked)) {
                 result.add(fileName);
             }
         }
         return result;
     }
 
+    private static void checkoutCommitDelete(String targetCommitId) {
+        Commit targetCommit = Commit.read(targetCommitId);
+        Commit curCommit = loadCurCommit();
+        Set targetCommitFileSet = targetCommit.getFileMap().keySet();
+        for (String fileName : curCommit.getFileMap().keySet()) {
+            if (!targetCommitFileSet.contains(fileName)) {
+                join(CWD, fileName).delete();
+            }
+        }
+    }
+
     private static void checkoutFile(String commitId, String fileName) {
         stage = loadStage();
-        if(!join(COMMIT_DIR,commitId).exists()){
+        if (!join(COMMIT_DIR, commitId).exists()) {
             exitWithMessage("No commit with that id exists.");
         }
         Commit curCommit = Commit.read(commitId);
@@ -262,7 +310,6 @@ public class Repository {
 
 
 }
-
 
 
 
