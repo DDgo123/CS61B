@@ -23,7 +23,7 @@ public class Stage implements Serializable {
 
     public void save() {
         writeObject(stageFile, this);
-        writeContents(join(STAGE_DIR, "stage.txt"), addStage.toString(), removeStage.toString(), branchMap.toString(), curBranch);
+        //writeContents(join(STAGE_DIR, "stage.txt"), addStage.toString(), removeStage.toString(), branchMap.toString(), curBranch);
     }
 
     public void add(String key, String value) {

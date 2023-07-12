@@ -5,31 +5,10 @@ import java.util.*;
 
 import static gitlet.Utils.*;
 
-// TODO: any imports you need here
-
-/**
- * Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
- *
- * @author TODO
- */
 public class Repository {
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Repository class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided two examples for you.
-     */
 
-    /**
-     * The current working directory.
-     */
     public static final File CWD = new File(System.getProperty("user.dir"));
-    /**
-     * The .gitlet directory.
-     */
+
     public static final File GITLET_DIR = join(CWD, ".gitlet");
     public static final File COMMIT_DIR = join(GITLET_DIR, "commit");
     public static final File BLOB_DIR = join(GITLET_DIR, "blob");
@@ -42,7 +21,7 @@ public class Repository {
     public static void init() {
         /*build gitlet and gitlet/objects dir */
         if (!GITLET_DIR.exists()) {
-            createDirectories(GITLET_DIR, COMMIT_DIR, BLOB_DIR, STAGE_DIR, HEAD_DIR, BRANCH_DIR, MASTER_DIR);
+            createDir(GITLET_DIR, COMMIT_DIR, BLOB_DIR, STAGE_DIR, HEAD_DIR, BRANCH_DIR, MASTER_DIR);
             // create dir
             Date initTime = new Date(0);
             List<String> emptyList = new ArrayList<>();
@@ -54,11 +33,12 @@ public class Repository {
             stage.save();
             init.save();
         } else {
-            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            String a = "A Gitlet version-control system already exists in the current directory.";
+            exitWithMessage(a);
         }
     }
 
-    private static void createDirectories(File... directories) {
+    private static void createDir(File... directories) {
         for (File directory : directories) {
             if (!directory.exists()) {
                 directory.mkdir();
@@ -67,8 +47,7 @@ public class Repository {
     }
 
     public static Stage loadStage() {
-        Stage stage = readObject(join(STAGE_DIR, "stage"), Stage.class);
-        return stage;
+        return readObject(join(STAGE_DIR, "stage"), Stage.class);
     }
 
     public static Commit loadCurCommit() {
@@ -91,7 +70,7 @@ public class Repository {
             stage.save();
             return;
         }
-        if (blob.getId().equals(curCommit.getFileMap().get(fileName))) {
+        if (curCommit.containsBlob(blob.getId())) {
             //If the added file is the same version as the current commit
             stage.getAddStage().remove(fileName);
             stage.save();
@@ -252,7 +231,8 @@ public class Repository {
         List<String> untrackFileList = getUntrackFileList();
         for (String fileName : targetCommit.getFileMap().keySet()) {
             if (untrackFileList.contains(fileName)) {
-                exitWithMessage("There is an untracked file in the way; delete it, or add and commit it first.");
+                String a  = "There is an untracked file in the way; delete it, or add and commit it first.";
+                exitWithMessage(a);
             }
             checkoutFile(targetCommitId, fileName);
         }
@@ -315,8 +295,3 @@ public class Repository {
 
 
 }
-
-
-
-/* TODO: fill in the rest of this class. */
-
