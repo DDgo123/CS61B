@@ -8,8 +8,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import static gitlet.Repository.STAGE_DIR;
-import static gitlet.Utils.join;
-import static gitlet.Utils.writeObject;
+import static gitlet.Utils.*;
 
 public class Stage implements Serializable {
     private Map<String, String> addStage = new TreeMap<>();
@@ -24,6 +23,7 @@ public class Stage implements Serializable {
 
     public void save() {
         writeObject(stageFile, this);
+        writeContents(join(STAGE_DIR, "stage.txt"), addStage.toString(), removeStage.toString(), branchMap.toString(), curBranch);
     }
 
     public void add(String key, String value) {

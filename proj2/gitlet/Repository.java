@@ -86,13 +86,20 @@ public class Repository {
         Blob blob = new Blob(fileName, contents);
         stage = loadStage();
         Commit curCommit = loadCurCommit();
+        if (stage.getRmStage().contains(fileName)) {
+            stage.getRmStage().remove(fileName);
+            stage.save();
+            return;
+        }
         if (blob.getId().equals(curCommit.getFileMap().get(fileName))) {
             //If the added file is the same version as the current commit
             stage.getAddStage().remove(fileName);
-        } else {
-            blob.save();
-            stage.add(fileName, blob.getId());
+            stage.save();
+            return;
         }
+        blob.save();
+        stage.add(fileName, blob.getId());
+
         stage.save();
         //printStage();
     }
@@ -100,10 +107,10 @@ public class Repository {
     public static void commit(String message) {
         stage = loadStage();
         if (message.isEmpty()) {
-            exitWithMessage("No changes added to the commit.");
+            exitWithMessage("Please enter a commit message.");
         }
         if (stage.getRmStage().isEmpty() && stage.getAddStage().isEmpty()) {
-            exitWithMessage("Please enter a commit message.");
+            exitWithMessage("No changes added to the commit.");
         }
         Date curTime = new Date();
         Commit curCommit = loadCurCommit();
@@ -166,10 +173,9 @@ public class Repository {
                 find = true;
                 System.out.println(commitId);
             }
-            if (!find) {
-                exitWithMessage("Found no commit with that message");
-            }
-
+        }
+        if (!find) {
+            exitWithMessage("Found no commit with that message");
         }
 
     }
@@ -190,6 +196,9 @@ public class Repository {
         if (args.length == 2) {
             if (stage.getCurBranch().equals(args[1])) {
                 exitWithMessage("No need to checkout the current branch.");
+            }
+            if (!stage.containsBranch(args[1])) {
+                exitWithMessage("No such branch exists.");
             }
             checkoutCommitDelete(stage.getBranchHead(args[1]));
             checkoutBranch(args[1]);
@@ -239,10 +248,6 @@ public class Repository {
     private static void checkoutBranch(String branchName) {
         stage = loadStage();
         String targetCommitId = stage.getBranchHead(branchName);
-        if (!stage.containsBranch(branchName)) {
-            exitWithMessage("No such branch exists.");
-        }
-
         Commit targetCommit = Commit.read(targetCommitId);
         List<String> untrackFileList = getUntrackFileList();
         for (String fileName : targetCommit.getFileMap().keySet()) {
