@@ -2,11 +2,6 @@ package gitlet;
 
 import static gitlet.Repository.exitWithMessage;
 
-/**
- * Driver class for Gitlet, a subset of the Git version-control system.
- *
- * @author TODO
- */
 public class Main {
 
     /**
@@ -15,7 +10,6 @@ public class Main {
      */
     public static void main(String[] args) {
         validateNotEmptyArgs(args);
-        // TODO: what if args is empty?
         String firstArg = args[0];
         switch (firstArg) {
             case "init":
@@ -25,13 +19,11 @@ public class Main {
             case "add":
                 validateCWD();
                 validateNumArgs(args, 2);
-                // TODO: handle the `add [filename]` command
                 Repository.add(args[1]);
                 break;
             case "commit":
                 validateCWD();
                 validateNumArgs(args, 2);
-                // TODO: handle the `add [filename]` command
                 Repository.commit(args[1]);
                 break;
             case "rm":
@@ -87,7 +79,6 @@ public class Main {
                 validateCWD();
                 exitWithMessage("No command with that name exists.");
                 break;
-            // TODO: FILL THE REST IN
         }
 
     }
