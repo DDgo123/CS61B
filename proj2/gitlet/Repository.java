@@ -34,8 +34,8 @@ public class Repository {
             stage.save();
             init.save();
         } else {
-            exitWithMessage("A Gitlet version-control system already exists " +
-                    "in the current directory.");
+            exitWithMessage("A Gitlet version-control system already exists "
+                    + "in the current directory.");
         }
     }
 
