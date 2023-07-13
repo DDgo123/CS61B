@@ -166,23 +166,33 @@ public class Repository {
 
     public static void checkout(String[] args) {
         stage = loadStage();
-        if (args.length == 3) {
+        if (args.length == 3 && args[1].equals("--")) {
             checkoutFile(stage.getCurCommitId(), args[2]);
-        }
-        if (args.length == 4) {
+
+        } else if (args.length == 4 && args[2].equals("--")) {
             checkoutFile(args[1], args[3]);
-        }
-        if (args.length == 2) {
+        } else if (args.length == 2) {
             if (stage.getCurBranch().equals(args[1])) {
                 exitWithMessage("No need to checkout the current branch.");
             }
             if (!stage.containsBranch(args[1])) {
                 exitWithMessage("No such branch exists.");
             }
-            checkoutCommitDelete(stage.getBranchHead(args[1]));
             checkoutBranch(args[1]);
+
+        } else {
+            exitWithMessage("Incorrect operands.");
         }
 
+    }
+
+    private static void checkoutBranch(String branchName) {
+        stage = loadStage();
+        String commitId = stage.getBranchHead(branchName);
+        checkoutCommit(commitId);
+        stage.clearAll();
+        stage.setCurBranch(branchName);
+        stage.save();
     }
 
     public static void branch(String branchName) {
@@ -211,11 +221,10 @@ public class Repository {
             exitWithMessage("No commit with that id exists.");
         }
         stage = loadStage();
-        String curBranch = stage.getCurBranch();
-        checkoutCommitDelete(commitId);
-        stage.setHead(curBranch, commitId);
+        checkoutCommit(commitId);
+        stage.setHead(stage.getCurBranch(), commitId);
+        stage.clearAll();
         stage.save();
-        checkoutBranch(curBranch);
 
     }
 
@@ -224,21 +233,18 @@ public class Repository {
     }
 
 
-    private static void checkoutBranch(String branchName) {
+    private static void checkoutCommit(String commitId) {
         stage = loadStage();
-        String targetCommitId = stage.getBranchHead(branchName);
-        Commit targetCommit = Commit.read(targetCommitId);
+        Commit targetCommit = Commit.read(commitId);
         List<String> untrackFileList = getUntrackFileList();
         for (String fileName : targetCommit.getFileMap().keySet()) {
             if (untrackFileList.contains(fileName)) {
-                String a  = "There is an untracked file in the way; delete it, or add and commit it first.";
+                String a = "There is an untracked file in the way; delete it, or add and commit it first.";
                 exitWithMessage(a);
             }
-            checkoutFile(targetCommitId, fileName);
+            checkoutFile(commitId, fileName);
         }
-        stage.clearAll();
-        stage.setCurBranch(branchName);
-        stage.save();
+        checkoutCommitDelete(commitId);
     }
 
     private static List<String> getUntrackFileList() {
@@ -257,6 +263,7 @@ public class Repository {
     }
 
     private static void checkoutCommitDelete(String targetCommitId) {
+
         Commit targetCommit = Commit.read(targetCommitId);
         Commit curCommit = loadCurCommit();
         Set targetCommitFileSet = targetCommit.getFileMap().keySet();
@@ -269,10 +276,10 @@ public class Repository {
 
     private static void checkoutFile(String commitId, String fileName) {
         stage = loadStage();
-        if (!join(COMMIT_DIR, commitId).exists()) {
+        Commit curCommit = Commit.read(commitId);
+        if (curCommit == null) {
             exitWithMessage("No commit with that id exists.");
         }
-        Commit curCommit = Commit.read(commitId);
         String blobId = curCommit.getFileMap().get(fileName);
         if (blobId == null) {
             exitWithMessage("File does not exist in that commit.");

@@ -14,12 +14,11 @@ import static gitlet.Utils.*;
 
 public class Commit implements Serializable {
 
-    private String message;
-    private List<String> parentsId;
     private final Date time;
-    private String id;
+    private final String message;
+    private final List<String> parentsId;
+    private final String id;
     private Map<String, String> nameToBlobId = new TreeMap<>();
-
 
 
     public Commit(String message, List<String> parents, Date time, Map<String, String> nameToBlobID) {
@@ -29,6 +28,26 @@ public class Commit implements Serializable {
         this.id = generateID();
         this.nameToBlobId = nameToBlobID;
 
+    }
+
+    public static Commit read(String commitId) {
+        if (commitId.length() < 40) {
+            List<String> commitIdList = Utils.plainFilenamesIn(COMMIT_DIR);
+            assert commitIdList != null;
+            for (String fullCommitId : commitIdList) {
+                if (fullCommitId.startsWith(commitId)) {
+                    commitId = fullCommitId;
+                    break;
+                }
+            }
+        }
+        File commitfile = join(COMMIT_DIR, commitId);
+        if (!commitfile.exists()) {
+            return null;
+        } else {
+            Commit commit = readObject(join(COMMIT_DIR, commitId), Commit.class);
+            return commit;
+        }
     }
 
     public void save() {
@@ -57,12 +76,7 @@ public class Commit implements Serializable {
     }
 
     public String getId() {
-        return new String(id);
-    }
-
-    public static Commit read(String commitId) {
-        Commit commit = readObject(join(COMMIT_DIR, commitId), Commit.class);
-        return commit;
+        return id;
     }
 
     public String toString() {
@@ -73,7 +87,7 @@ public class Commit implements Serializable {
     }
 
     public String getMessage() {
-        return new String(message);
+        return message;
     }
 
     public Map<String, String> getFileMap() {

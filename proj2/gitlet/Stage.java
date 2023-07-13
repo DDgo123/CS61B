@@ -8,14 +8,15 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import static gitlet.Repository.STAGE_DIR;
-import static gitlet.Utils.*;
+import static gitlet.Utils.join;
+import static gitlet.Utils.writeObject;
 
 public class Stage implements Serializable {
-    private Map<String, String> addStage = new TreeMap<>();
-    private Set<String> removeStage = new TreeSet<>();
+    private final Map<String, String> addStage = new TreeMap<>();
+    private final Set<String> removeStage = new TreeSet<>();
+    private final Map<String, String> branchMap = new TreeMap<>();
     File stageFile = join(STAGE_DIR, "stage");
     private String curBranch;
-    private Map<String, String> branchMap = new TreeMap<>();
 
     public Stage(String branch, String head) {
         this.branchMap.put(branch, head);
@@ -38,10 +39,6 @@ public class Stage implements Serializable {
         branchMap.put(branchName, head);
     }
 
-    public void setCurBranch(String branchName) {
-        curBranch = branchName;
-    }
-
     public String getCurCommitId() {
         return branchMap.get(curBranch);
     }
@@ -50,6 +47,9 @@ public class Stage implements Serializable {
         return curBranch;
     }
 
+    public void setCurBranch(String branchName) {
+        curBranch = branchName;
+    }
 
     public void printStatus() {
         String branches = "=== Branches ===\n";
