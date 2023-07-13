@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static gitlet.Repository.COMMIT_DIR;
 import static gitlet.Utils.*;
@@ -17,15 +20,15 @@ public class Commit implements Serializable {
     private final String message;
     private final List<String> parentsId;
     private final String id;
-    private Map<String, String> nameToBlobId = new TreeMap<>();
+    private final Map<String, String> nameToBlobId;
 
 
-    public Commit(String message, List<String> parents, Date time, Map<String, String> nameToBlobID) {
+    public Commit(String message, List<String> parents, Date time, Map<String, String> map) {
         this.message = message;
         this.parentsId = parents;
         this.time = time;
         this.id = generateID();
-        this.nameToBlobId = nameToBlobID;
+        this.nameToBlobId = map;
 
     }
 
@@ -44,8 +47,7 @@ public class Commit implements Serializable {
         if (!commitfile.exists()) {
             return null;
         } else {
-            Commit commit = readObject(join(COMMIT_DIR, commitId), Commit.class);
-            return commit;
+            return readObject(join(COMMIT_DIR, commitId), Commit.class);
         }
     }
 
@@ -56,7 +58,7 @@ public class Commit implements Serializable {
         writeObject(commitFile, commit);
     }
 
-    public String TimeToString() {
+    public String timeToString() {
         DateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
         return dateFormat.format(time);
     }
@@ -70,8 +72,7 @@ public class Commit implements Serializable {
     }
 
     private String generateID() {
-        String sha1 = sha1(this.TimeToString(), message, parentsId.toString());
-        return sha1;
+        return sha1(this.timeToString(), message, parentsId.toString());
     }
 
     public String getId() {
@@ -80,7 +81,7 @@ public class Commit implements Serializable {
 
     public String toString() {
         String log = String.format("===\ncommit %s\n", id);
-        log += String.format("Date: %s\n", TimeToString());
+        log += String.format("Date: %s\n", timeToString());
         log += String.format("%s\n", message);
         return log;
     }

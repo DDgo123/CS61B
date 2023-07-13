@@ -33,10 +33,6 @@ public class Blob implements Serializable {
         return id;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
     public String getContents() {
         return contents;
     }

@@ -21,7 +21,8 @@ public class Repository {
     public static void init() {
         /*build gitlet and gitlet/objects dir */
         if (!GITLET_DIR.exists()) {
-            createDir(GITLET_DIR, COMMIT_DIR, BLOB_DIR, STAGE_DIR, HEAD_DIR, BRANCH_DIR, MASTER_DIR);
+            createDir(GITLET_DIR, COMMIT_DIR, BLOB_DIR, STAGE_DIR,
+                    HEAD_DIR, BRANCH_DIR, MASTER_DIR);
             // create dir
             Date initTime = new Date(0);
             List<String> emptyList = new ArrayList<>();
@@ -33,8 +34,8 @@ public class Repository {
             stage.save();
             init.save();
         } else {
-            String a = "A Gitlet version-control system already exists in the current directory.";
-            exitWithMessage(a);
+            exitWithMessage("A Gitlet version-control system already exists " +
+                    "in the current directory.");
         }
     }
 
@@ -52,8 +53,7 @@ public class Repository {
 
     public static Commit loadCurCommit() {
         stage = loadStage();
-        Commit curCommit = Commit.read(stage.getCurCommitId());
-        return curCommit;
+        return Commit.read(stage.getCurCommitId());
     }
 
     public static void add(String fileName) {
@@ -239,8 +239,9 @@ public class Repository {
         List<String> untrackFileList = getUntrackFileList();
         for (String fileName : targetCommit.getFileMap().keySet()) {
             if (untrackFileList.contains(fileName)) {
-                String a = "There is an untracked file in the way; delete it, or add and commit it first.";
-                exitWithMessage(a);
+
+                exitWithMessage("There is an untracked file in the way; delete it,"
+                        + " or add and commit it first.");
             }
             checkoutFile(commitId, fileName);
         }

@@ -12,10 +12,10 @@ import static gitlet.Utils.join;
 import static gitlet.Utils.writeObject;
 
 public class Stage implements Serializable {
+    final File stageFile = join(STAGE_DIR, "stage");
     private final Map<String, String> addStage = new TreeMap<>();
     private final Set<String> removeStage = new TreeSet<>();
     private final Map<String, String> branchMap = new TreeMap<>();
-    File stageFile = join(STAGE_DIR, "stage");
     private String curBranch;
 
     public Stage(String branch, String head) {
@@ -52,24 +52,25 @@ public class Stage implements Serializable {
     }
 
     public void printStatus() {
-        String branches = "=== Branches ===\n";
+        StringBuilder branches = new StringBuilder("=== Branches ===\n");
         for (String key : branchMap.keySet()) {
             if (key.equals(curBranch)) {
                 key = String.format("*%s", key);
             }
-            branches += String.format("%s\n", key);
+            branches.append(String.format("%s\n", key));
         }
-        String stageFiles = "=== Staged Files ===\n";
+        StringBuilder stageFiles = new StringBuilder("=== Staged Files ===\n");
         for (String key : addStage.keySet()) {
-            stageFiles += String.format("%s\n", key);
+            stageFiles.append(String.format("%s\n", key));
         }
-        String removleFiles = "=== Removed Files ===\n";
+        StringBuilder removleFiles = new StringBuilder("=== Removed Files ===\n");
         for (String key : removeStage) {
-            removleFiles += String.format("%s\n", key);
+            removleFiles.append(String.format("%s\n", key));
         }
         String modifications = "=== Modifications Not Staged For Commit ===\n";
         String untracked = "=== Untracked Files ===\n";
-        String[] stringsToPrint = {branches, stageFiles, removleFiles, modifications, untracked};
+        String[] stringsToPrint = {branches.toString(), stageFiles.toString(),
+                removleFiles.toString(), modifications, untracked};
         for (String str : stringsToPrint) {
             System.out.println(str);
         }
