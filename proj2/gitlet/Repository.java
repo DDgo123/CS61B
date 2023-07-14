@@ -314,6 +314,9 @@ public class Repository {
                 }
             } else if (splitPointBlobId.equals(currentBlobId) && givenBlobId.isEmpty()) {
                 rm(fileName);
+            } else if (!splitPointBlobId.equals(currentBlobId) && givenBlobId.isEmpty()) {
+                handleConflict(fileName, currentBlobId, givenBlobId);
+                conflict = true;
             }
 
         }
@@ -322,10 +325,18 @@ public class Repository {
     }
 
     private static void handleConflict(String fileName, String curBlobId, String givenBlobId) {
-        String currentContent = Blob.read(join(BLOB_DIR, curBlobId)).getContents();
-        String givenContent = Blob.read(join(BLOB_DIR, givenBlobId)).getContents();
+        String currentContent = "";
+        String givenContent = "";
+        if (!curBlobId.isEmpty()) {
+            currentContent = Blob.read(join(BLOB_DIR, curBlobId)).getContents();
+        }
+
+        if (!givenBlobId.isEmpty()) {
+            givenContent = Blob.read(join(BLOB_DIR, givenBlobId)).getContents();
+        }
+
         String conflictContent = "<<<<<<< HEAD\n" + currentContent
-                + "\n=======\n" + givenContent + "\n>>>>>>>";
+                + "=======\n" + givenContent + ">>>>>>>\n";
 
         writeContents(join(CWD, fileName), conflictContent);
         add(fileName);
