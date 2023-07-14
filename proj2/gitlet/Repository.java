@@ -272,9 +272,9 @@ public class Repository {
             List<String> parentIds = new ArrayList<>();
             parentIds.add(curCommitId);
             parentIds.add(targetCommitId);
-            commit(String.format("Merged %s into %s.", branchName, stage.getCurBranch()), parentIds);
+            commit(String.format("Merged %s into %s.", branchName, stage.getCurBranch()),
+                    parentIds);
         }
-        System.out.println(splitPointId);
 
 
     }
@@ -323,8 +323,8 @@ public class Repository {
     private static void handleConflict(String fileName, String currentBlobId, String givenBlobId) {
         String currentContent = Blob.read(join(BLOB_DIR, currentBlobId)).getContents();
         String givenContent = Blob.read(join(BLOB_DIR, givenBlobId)).getContents();
-
-        String conflictContent = "<<<<<<< HEAD\n" + currentContent + "\n=======\n" + givenContent + "\n>>>>>>>";
+        String conflictContent = "<<<<<<< HEAD\n" + currentContent
+                + "\n=======\n" + givenContent + "\n>>>>>>>";
 
         writeContents(join(CWD, fileName), conflictContent);
         add(fileName);

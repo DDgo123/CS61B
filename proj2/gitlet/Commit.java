@@ -69,9 +69,10 @@ public class Commit implements Serializable {
         }
         return parentsId.get(0);
     }
+
     public List<String> getAllParentsId() {
         return parentsId;
-        }
+    }
 
     private String generateID() {
         return sha1(this.timeToString(), message, parentsId.toString());
