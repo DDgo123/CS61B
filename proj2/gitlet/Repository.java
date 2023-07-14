@@ -85,6 +85,13 @@ public class Repository {
 
     public static void commit(String message) {
         stage = loadStage();
+        List<String> parentId = new ArrayList<>();
+        parentId.add(stage.getCurCommitId());
+        commit(message,parentId );
+    }
+
+    private static void commit(String message, List<String> parentId) {
+        stage = loadStage();
         if (message.isEmpty()) {
             exitWithMessage("Please enter a commit message.");
         }
@@ -93,13 +100,12 @@ public class Repository {
         }
         Date curTime = new Date();
         Commit curCommit = loadCurCommit();
-        List<String> preCommitId = new ArrayList<>(Collections.singleton(curCommit.getId()));
         Map<String, String> newMap = curCommit.getFileMap();
         newMap.putAll(stage.getAddStage());
         for (String value : stage.getRmStage()) {
             newMap.remove(value);
         }
-        Commit newCommit = new Commit(message, preCommitId, curTime, newMap);
+        Commit newCommit = new Commit(message, parentId, curTime, newMap);
         newCommit.save();
         stage.setHead(stage.getCurBranch(), newCommit.getId());
         stage.clearAll();
@@ -130,9 +136,10 @@ public class Repository {
         while (commitId != null) {
             Commit curCommit = Commit.read(commitId);
             System.out.println(curCommit);
-            commitId = curCommit.getParentsId();
+            commitId = curCommit.getFirstParentId();
         }
     }
+
 
     public static void globalLog() {
         List<String> commitList = plainFilenamesIn(COMMIT_DIR);
@@ -228,8 +235,135 @@ public class Repository {
 
     }
 
-    public static void merge(String arg) {
+    public static void merge(String branchName) {
+        stage = loadStage();
+        if (!stage.getAddStage().isEmpty() || !stage.getRmStage().isEmpty()) {
+            exitWithMessage("You have uncommitted changes.");
+        }
+        String curCommitId = stage.getCurCommitId();
+        String targetCommitId = stage.getBranchHead(branchName);
+        if (targetCommitId == null) {
+            exitWithMessage("A branch with that name does not exist.");
+            return;
+        }
+        if (stage.getCurBranch().equals(branchName)) {
+            exitWithMessage("Cannot merge a branch with itself.");
+        }
+        List<String> untrackFilesList = getUntrackFileList();
+        Commit targetCommit = Commit.read(targetCommitId);
+        if (!untrackFilesList.isEmpty()) {
+            for (String fileName : targetCommit.getFileMap().keySet()) {
+                if (untrackFilesList.contains(fileName)) {
+                    exitWithMessage("There is an untracked file in the way; delete it,"
+                            + " or add and commit it first.");
+                }
+            }
+        }
 
+        String splitPointId = getSplitPoint(branchName);
+        if (splitPointId.equals(curCommitId)) {
+            checkoutBranch(branchName);
+            exitWithMessage("Current branch fast-forwarded.");
+        }
+        if (splitPointId.equals(targetCommitId)) {
+            exitWithMessage("Given branch is an ancestor of the current branch.");
+        } else {
+            mergeFiles(splitPointId, curCommitId, targetCommitId);
+            List<String> parentIds = new ArrayList<>();
+            parentIds.add(curCommitId);
+            parentIds.add(targetCommitId);
+            commit(String.format("Merged %s into %s.", branchName, stage.getCurBranch()),parentIds);
+        }
+        System.out.println(splitPointId);
+
+
+    }
+
+    private static void mergeFiles(String splitPointId, String curCommitId, String targetCommitId) {
+        stage = loadStage();
+        Map<String, String> splitPointFiles = Commit.read(splitPointId).getFileMap();
+        Map<String, String> curCommitFiles = Commit.read(curCommitId).getFileMap();
+        Map<String, String> targetCommitFiles = Commit.read(targetCommitId).getFileMap();
+        boolean conflict = false;
+        for (String fileName : targetCommitFiles.keySet()) {
+            String splitPointBlobId = splitPointFiles.getOrDefault(fileName, "");
+            String currentBlobId = curCommitFiles.getOrDefault(fileName, "");
+            String targetBlobId = targetCommitFiles.get(fileName);
+
+            if (!splitPointBlobId.equals(targetBlobId)) {
+                if (currentBlobId.equals(splitPointBlobId)) {
+                    checkoutFile(targetCommitId, fileName);
+                    add(fileName);
+                    //two
+                } else if (!currentBlobId.equals(targetBlobId)) {
+                    handleConflict(fileName, currentBlobId, targetBlobId);
+                    conflict = true;
+                }
+            }
+        }
+        for (String fileName : splitPointFiles.keySet()) {
+            String splitPointBlobId = splitPointFiles.getOrDefault(fileName, "");
+            String currentBlobId = curCommitFiles.getOrDefault(fileName, "");
+            String targetBlobId = targetCommitFiles.getOrDefault(fileName, "");
+            if (splitPointBlobId.equals(targetBlobId) && currentBlobId.isEmpty()) {
+                if (join(CWD, fileName).exists()) {
+                    rm(fileName);
+                }
+            } else if (splitPointBlobId.equals(currentBlobId) && targetBlobId.isEmpty()) {
+                rm(fileName);
+            }
+
+        }
+        if (conflict) {
+            exitWithMessage("Encountered a merge conflict.");
+        }
+
+    }
+
+    private static void handleConflict(String fileName, String currentBlobId, String givenBlobId) {
+        String currentContent = Blob.read(join(BLOB_DIR, currentBlobId)).getContents();
+        String givenContent = Blob.read(join(BLOB_DIR, givenBlobId)).getContents();
+
+        String conflictContent = "<<<<<<< HEAD\n" + currentContent + "\n=======\n" + givenContent + "\n>>>>>>>";
+
+        writeContents(join(CWD, fileName), conflictContent);
+        add(fileName);
+    }
+
+    private static String getSplitPoint(String branchName) {
+        stage = loadStage();
+        String splitPoint = null;
+        String curCommitId = stage.getCurCommitId();
+        String targetCommitId = stage.getBranchHead(branchName);
+
+        // Create a set to store visited commits
+        Set<String> visited = new HashSet<>();
+
+        // Create a queue for BFS traversal
+        Queue<String> queue = new LinkedList<>();
+        queue.offer(curCommitId);
+        queue.offer(targetCommitId);
+
+        while (!queue.isEmpty()) {
+            String commitId = queue.poll();
+
+            // Check if commit has been visited
+            if (visited.contains(commitId)) {
+                splitPoint = commitId;
+                break;
+            }
+
+            // Add commit to visited set
+            visited.add(commitId);
+
+            // Get parent commit(s) and add them to the queue
+            Commit commit = Commit.read(commitId);
+            for (String parentId : commit.getAllParentsId()) {
+                queue.offer(parentId);
+            }
+        }
+
+        return splitPoint;
     }
 
 

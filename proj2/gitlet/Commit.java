@@ -63,13 +63,15 @@ public class Commit implements Serializable {
         return dateFormat.format(time);
     }
 
-    public String getParentsId() {
+    public String getFirstParentId() {
         if (parentsId.isEmpty()) {
             return null;
         }
-
         return parentsId.get(0);
     }
+    public List<String> getAllParentsId() {
+        return parentsId;
+        }
 
     private String generateID() {
         return sha1(this.timeToString(), message, parentsId.toString());
