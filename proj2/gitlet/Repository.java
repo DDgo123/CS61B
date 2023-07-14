@@ -282,24 +282,24 @@ public class Repository {
 
     }
 
-    private static boolean mergeFiles(String splitPointId, String curCommitId, String targetCommitId) {
+    private static boolean mergeFiles(String splitPoint, String curCommitId, String givenId) {
         stage = loadStage();
-        Map<String, String> splitPointFiles = Commit.read(splitPointId).getFileMap();
+        Map<String, String> splitPointFiles = Commit.read(splitPoint).getFileMap();
         Map<String, String> curCommitFiles = Commit.read(curCommitId).getFileMap();
-        Map<String, String> targetCommitFiles = Commit.read(targetCommitId).getFileMap();
+        Map<String, String> givenCommitFiles = Commit.read(givenId).getFileMap();
         boolean conflict = false;
-        for (String fileName : targetCommitFiles.keySet()) {
+        for (String fileName : givenCommitFiles.keySet()) {
             String splitPointBlobId = splitPointFiles.getOrDefault(fileName, "");
             String currentBlobId = curCommitFiles.getOrDefault(fileName, "");
-            String targetBlobId = targetCommitFiles.get(fileName);
+            String givenBlobId = givenCommitFiles.get(fileName);
 
-            if (!splitPointBlobId.equals(targetBlobId)) {
+            if (!splitPointBlobId.equals(givenBlobId)) {
                 if (currentBlobId.equals(splitPointBlobId)) {
-                    checkoutFile(targetCommitId, fileName);
+                    checkoutFile(givenId, fileName);
                     add(fileName);
                     //two
-                } else if (!currentBlobId.equals(targetBlobId)) {
-                    handleConflict(fileName, currentBlobId, targetBlobId);
+                } else if (!currentBlobId.equals(givenBlobId)) {
+                    handleConflict(fileName, currentBlobId, givenBlobId);
                     conflict = true;
                 }
             }
@@ -307,12 +307,12 @@ public class Repository {
         for (String fileName : splitPointFiles.keySet()) {
             String splitPointBlobId = splitPointFiles.getOrDefault(fileName, "");
             String currentBlobId = curCommitFiles.getOrDefault(fileName, "");
-            String targetBlobId = targetCommitFiles.getOrDefault(fileName, "");
-            if (splitPointBlobId.equals(targetBlobId) && currentBlobId.isEmpty()) {
+            String givenBlobId = givenCommitFiles.getOrDefault(fileName, "");
+            if (splitPointBlobId.equals(givenBlobId) && currentBlobId.isEmpty()) {
                 if (join(CWD, fileName).exists()) {
                     rm(fileName);
                 }
-            } else if (splitPointBlobId.equals(currentBlobId) && targetBlobId.isEmpty()) {
+            } else if (splitPointBlobId.equals(currentBlobId) && givenBlobId.isEmpty()) {
                 rm(fileName);
             }
 
@@ -321,8 +321,8 @@ public class Repository {
 
     }
 
-    private static void handleConflict(String fileName, String currentBlobId, String givenBlobId) {
-        String currentContent = Blob.read(join(BLOB_DIR, currentBlobId)).getContents();
+    private static void handleConflict(String fileName, String curBlobId, String givenBlobId) {
+        String currentContent = Blob.read(join(BLOB_DIR, curBlobId)).getContents();
         String givenContent = Blob.read(join(BLOB_DIR, givenBlobId)).getContents();
         String conflictContent = "<<<<<<< HEAD\n" + currentContent
                 + "\n=======\n" + givenContent + "\n>>>>>>>";
