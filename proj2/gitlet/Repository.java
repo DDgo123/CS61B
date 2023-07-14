@@ -314,6 +314,8 @@ public class Repository {
                 }
             } else if (splitPointBlobId.equals(currentBlobId) && givenBlobId.isEmpty()) {
                 rm(fileName);
+            } else if (currentBlobId.isEmpty() && givenBlobId.isEmpty()) {
+                //nothing to do
             } else if (!splitPointBlobId.equals(currentBlobId) && givenBlobId.isEmpty()) {
                 handleConflict(fileName, currentBlobId, givenBlobId);
                 conflict = true;
