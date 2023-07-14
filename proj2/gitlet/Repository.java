@@ -268,18 +268,21 @@ public class Repository {
         if (splitPointId.equals(targetCommitId)) {
             exitWithMessage("Given branch is an ancestor of the current branch.");
         } else {
-            mergeFiles(splitPointId, curCommitId, targetCommitId);
+            boolean conflict = mergeFiles(splitPointId, curCommitId, targetCommitId);
             List<String> parentIds = new ArrayList<>();
             parentIds.add(curCommitId);
             parentIds.add(targetCommitId);
             commit(String.format("Merged %s into %s.", branchName, stage.getCurBranch()),
                     parentIds);
+            if (conflict) {
+                exitWithMessage("Encountered a merge conflict.");
+            }
         }
 
 
     }
 
-    private static void mergeFiles(String splitPointId, String curCommitId, String targetCommitId) {
+    private static boolean mergeFiles(String splitPointId, String curCommitId, String targetCommitId) {
         stage = loadStage();
         Map<String, String> splitPointFiles = Commit.read(splitPointId).getFileMap();
         Map<String, String> curCommitFiles = Commit.read(curCommitId).getFileMap();
@@ -314,9 +317,7 @@ public class Repository {
             }
 
         }
-        if (conflict) {
-            exitWithMessage("Encountered a merge conflict.");
-        }
+        return conflict;
 
     }
 
