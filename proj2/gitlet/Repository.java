@@ -87,7 +87,7 @@ public class Repository {
         stage = loadStage();
         List<String> parentId = new ArrayList<>();
         parentId.add(stage.getCurCommitId());
-        commit(message,parentId );
+        commit(message, parentId);
     }
 
     private static void commit(String message, List<String> parentId) {
@@ -272,7 +272,7 @@ public class Repository {
             List<String> parentIds = new ArrayList<>();
             parentIds.add(curCommitId);
             parentIds.add(targetCommitId);
-            commit(String.format("Merged %s into %s.", branchName, stage.getCurBranch()),parentIds);
+            commit(String.format("Merged %s into %s.", branchName, stage.getCurBranch()), parentIds);
         }
         System.out.println(splitPointId);
 
