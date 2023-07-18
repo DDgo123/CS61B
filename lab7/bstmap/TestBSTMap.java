@@ -29,7 +29,6 @@ public class TestBSTMap {
                         && b.containsKey("hi" + i));
         }
         assertEquals(455, b.size());
-        b.printTreePyramid();
         b.clear();
         assertEquals(0, b.size());
         for (int i = 0; i < 455; i++) {

@@ -4,9 +4,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-public class BSTMap<K extends Comparable, V> implements Map61B<K, V> {
+public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
-    BSTNode root;
+    private BSTNode root;
 
     @Override
     public void clear() {
@@ -76,21 +76,16 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V> {
     }
 
 
-
-    private void printTreePyramid(BSTNode bst, String indent, boolean isRight) {
+    private void printInOrder(BSTNode bst) {
         if (bst == null) return;
+        System.out.println(String.format("(%s, %s) ", bst.key, bst.val));
+        printInOrder(bst.left);
+        printInOrder(bst.right);
 
-        String connector = isRight ? "└───" : "┌───";
-
-        printTreePyramid(bst.left, indent + (isRight ? "    " : "│   "), false);
-
-        System.out.println(indent + connector + bst.key + ", " + bst.val);
-
-        printTreePyramid(bst.right, indent + (isRight ? "│   " : "    "), true);
     }
 
-    public void printTreePyramid() {
-        printTreePyramid(root, "", false);
+    public void printInOrder() {
+        printInOrder(root);
     }
 
     @Override
@@ -134,7 +129,7 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V> {
     }
 
     @Override
-    public Set keySet() {
+    public Set<K> keySet() {
         throw new UnsupportedOperationException();
     }
 
