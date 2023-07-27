@@ -52,6 +52,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * @param initialSize initial size of backing array
      * @param maxLoad     maximum load factor
      */
+
+    //初始化
     public MyHashMap(int initialSize, double maxLoad) {
         this.loadFactor = maxLoad;
         this.m = initialSize;
@@ -110,6 +112,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     // Your code won't compile until you do so!
     @Override
     public void clear() {
+        //清空buckets，size为0
         buckets = null;
         size = 0;
     }
@@ -122,6 +125,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     }
 
     @Override
+    //get value，如果不存在返回null
     public V get(K key) {
         int index = hash(key);
         Node node = find(index, key);
@@ -137,20 +141,21 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     @Override
     public void put(K key, V value) {
         if (buckets == null) {
-            buckets = createTable(m);
+            buckets = createTable(m); //如果不存在，初始化buckets
         }
         int index = hash(key);
         Node node = find(index, key);
         if (node == null) {
-            buckets[index].add(createNode(key, value));
+            buckets[index].add(createNode(key, value)); //不存在的话就添加node
             size += 1;
-            if ((double) size / m > loadFactor) resize();
+            if ((double) size / m > loadFactor) resize(); //超出负载resize
             return;
         }
-        node.value = value;
+        node.value = value;//如果node存在就更新value
     }
 
     private void resize() {
+        //创建一个两倍大小的newmap，把当前的buckets只想newmap的buckets，m同理
         MyHashMap<K, V> newMap = new MyHashMap(m * 2, loadFactor);
         for (Collection<Node> bucket : buckets) {
             for (Node node : bucket) {
